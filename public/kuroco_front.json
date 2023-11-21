@@ -6,6 +6,6 @@
         }
       ],
     "redirects": [],
-    "basic":[],
+    "basic":["sales:sales"],
     "ip_restrictions":[]
 }
