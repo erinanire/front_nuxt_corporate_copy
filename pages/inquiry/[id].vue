@@ -112,56 +112,14 @@
 
               <!-- 日付 -->
               <template v-if="n.type === 6">
-                <div class="u-display-flex u-display-flex-align-items-center">
-                  <select
-                    v-model="y"
-                    @change="setYMD(n.key)"
-                    :name="n.key + '_y'"
-                    :id="n.key + '_y'"
-                  >
-                    <option label="選択なし" value="">選択なし</option>
-                    <option
-                      v-for="option in n.attribute.arrYear"
-                      :key="option"
-                      :label="option"
-                      :value="option"
-                    >
-                      {{ option }}
-                    </option>
-                  </select>
-                  <label :for="n.key + '_y'" class="u-pa-10">年</label>
-                  <select
-                    v-model="m"
-                    @change="setYMD(n.key)"
-                    :name="n.key + '_m'"
-                  >
-                    <option label="選択なし" value="">選択なし</option>
-                    <option label="01" value="01">01</option>
-                    <option label="02" value="02">02</option>
-                    <option label="03" value="03">03</option>
-                    <option label="04" value="04">04</option>
-                    <option label="05" value="05">05</option>
-                    <option label="06" value="06">06</option>
-                    <option label="07" value="07">07</option>
-                    <option label="08" value="08">08</option>
-                    <option label="09" value="09">09</option>
-                    <option label="10" value="10">10</option>
-                    <option label="11" value="11">11</option>
-                    <option label="12" value="12">12</option>
-                  </select>
-                  <label :for="n.key + '_m'" class="u-pa-10">月</label>
-                  <select
-                    v-model="d"
-                    @change="setYMD(n.key)"
-                    :name="n.key + '_d'"
-                  >
-                    <option label="選択なし" value="">選択なし</option>
-                    <option v-for="day in 31" :key="day" :label="String(day).padStart(2,'0')" :value="String(day).padStart(2,'0')">
-                      {{ String(day).padStart(2, '0') }}
-                    </option>
-                  </select>
-                  <label :for="n.key + '_d'" class="u-pa-10">日</label>
-                </div>
+                <input
+                  type="date"
+                  :id="n.key"
+                  :name="n.key"
+                  v-model="submitData[n.key]"
+                  :min="getDateMin(n.attribute.arrYear)"
+                  :max="getDateMax(n.attribute.arrYear)"
+                />
               </template>
 
               <!-- ファイルアップロード -->
@@ -202,24 +160,8 @@
               </template>
             </div>
 
-            <div class="c-form-group">
-              <input
-                type="checkbox"
-                name=""
-                value=""
-                id="privacy"
-                @click="disabled = !disabled"
-              />
-              <label for="privacy">
-                <NuxtLink to="#">利用規約</NuxtLink>及び<NuxtLink to="/privacy/"
-                  >プライバシーポリシー</NuxtLink
-                >に同意する</label
-              >
-            </div>
-
             <UiSubmitButton
               :loading="loading"
-              :disabled="disabled"
               id="inquiry_item_button_confirm"
               @click.prevent="handleOnSubmit"
             >
@@ -242,12 +184,8 @@ const inquiryId = route.params.id;
 const submitted = ref(false);
 const errors = ref([]);
 const errorRef = ref(null);
-const disabled = ref(true);
 const submitData = reactive({});
 const thanksText = ref(null);
-const y = ref('');
-const m = ref('');
-const d = ref('');
 const loading = ref(false);
 
 // inquiry_id を使って動的にフォーム定義を取得
@@ -270,8 +208,14 @@ Object.keys(response.value.details.cols).forEach((key) => {
   }
 });
 
-const setYMD = (key) => {
-  submitData[key] = `${y.value}-${m.value}-${d.value}`;
+// arrYear は { 2016: 2016, ..., 2036: 2036 } 形式のオブジェクト
+const getDateMin = (arrYear) => {
+  const years = Object.keys(arrYear).map(Number);
+  return `${Math.min(...years)}-01-01`;
+};
+const getDateMax = (arrYear) => {
+  const years = Object.keys(arrYear).map(Number);
+  return `${Math.max(...years)}-12-31`;
 };
 
 const handleFileChange = async (e, key) => {
