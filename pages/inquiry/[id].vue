@@ -3,7 +3,7 @@
     <UiPageHeader subject="お問い合わせ" subheading="Contact" />
 
     <section>
-      <div class="l-container--small l-container--contents">
+      <div class="l-container--large l-container--contents">
         <template v-if="submitted">
           <p class="c-text--pre" v-html="thanksText" />
           <NuxtLink to="/" class="c-button">トップページ</NuxtLink>
@@ -123,7 +123,7 @@
               </template>
 
               <!-- ファイルアップロード -->
-              <template v-if="n.type === 8">
+              <template v-if="n.type === 7">
                 <input
                   type="file"
                   :name="n.key"
@@ -199,7 +199,10 @@ const { data: response } = await useFetch(
 // フォームの初期値を設定
 Object.keys(response.value.details.cols).forEach((key) => {
   const object = response.value.details.cols[key];
-  if (object.type === 5 || object.type === 10) {
+  if (object.type === 4) {
+    // チェックボックスは配列で初期化しないと全選択バグが発生する
+    submitData[object.key] = [];
+  } else if (object.type === 5 || object.type === 10) {
     submitData[object.key] = '';
   } else if (object.type === 11) {
     submitData[object.key] = object.attribute.row.map(() => ({ COL: [] }));
