@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     // FullStaticGeneration
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/404.html', '/200.html'],
+      routes: ['/', '/404.html', '/200.html', '/inquiry/4'],
     },
   },
 });
